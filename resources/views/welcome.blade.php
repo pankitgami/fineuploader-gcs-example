@@ -9,7 +9,7 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-        <link href="{{asset('css/fine-uploader-gallery.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{secure_asset('css/fine-uploader-gallery.css')}}" rel="stylesheet" type="text/css">
         <!-- Styles -->
         <style>
             html, body {
@@ -152,8 +152,8 @@
             </div>
         </script>
 
-        <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('js/s3.jquery.fine-uploader.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('js/s3.jquery.fine-uploader.js') }}"></script>
 
         <script>
             var uploader = new qq.s3.FineUploader({
