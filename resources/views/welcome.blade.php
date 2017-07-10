@@ -160,28 +160,24 @@
                 debug: true,
                 element: document.getElementById('fine-uploader-gallery'),
                 request: {
-                    endpoint: 'https://storage.googleapis.com/fineuploader-test.appspot.com',
-                    accessKey: 'GOOGKZ5UYT2Q33IYBYYD'
+                    endpoint: 'https://storage.googleapis.com/{bucket_name}',
+                    accessKey: 'Your Access Key'
                 },
                 objectProperties:{
-                    bucket:'fineuploader-test.appspot.com',
-                    host:'https://storage.googleapis.com/fineuploader-test.appspot.com',
+                    bucket:'{bucket_name}',
+                    host:'https://storage.googleapis.com/{bucket_name}',
                 },
                 signature: {
                     endpoint: '/gcp/endpoint'
                 },
                 uploadSuccess: {
-                    endpoint: '/gcp/endpoint?success=true&rand='
+                    endpoint: '/gcp/success'
                 },
                 iframeSupport: {
                     localBlankPagePath: '/success.html'
                 },
                 retry: {
                     enableAuto: true // defaults to false
-                },
-                deleteFile: {
-                    enabled: true,
-                    endpoint: '/gcp/endpoint?delete'
                 },
                 cors: {
                     //all requests are expected to be cross-domain requests
@@ -192,19 +188,10 @@
                 },
                 callbacks: {
                     onComplete : function(id, name, response, xhr){
-                        console.log(id, name, response, xhr);
-                        var input = document.createElement('INPUT');
-                        input.setAttribute('type', 'hidden');
-                        input.setAttribute('name', 'images[]');
-                        input.setAttribute('value', response.key);
-                        console.log(input);
-                        $('#ff').append(input);
+                        // Write your code
                     },
                     onDeleteComplete :  function(id, xhr, isError){
-                        console.log(id, xhr, isError);
-                        var response = JSON.parse(xhr.response);
-                        console.log(response, response.key);
-                        $(':input[value="'+response.key+'"]').remove();
+                        // Write your code
                     }
                 }
             });

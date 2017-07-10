@@ -10,11 +10,9 @@ return [
   'client' => 'gcs',
 
   'gcs' => [
-      'bucket' => 'fineuploader-test',
-      'private_key' => 'MczuIa+Agf+8xA9Dy9oF8Vpyj4ULJqXve2ACXZ44',
-      'access_key' => 'GOOGKZ5UYT2Q33IYBYYD',
-//      'file_name' => '',
-//      'file_path' => ''
+      'bucket' => '',
+      'private_key' => '',
+      'access_key' => '',
   ]
 
 ];

@@ -19,4 +19,8 @@ class Controller extends BaseController
 
         return JsonResponse::create($signedPolicy);
     }
+
+    public function success(Request $request){
+        return JsonResponse::create(['status' => true]);
+    }
 }

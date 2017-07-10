@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::post('gcp/endpoint', ['as' => 'gcp.endpoint', 'uses' => 'Controller@signRequest']);
+Route::post('gcp/success', ['as' => 'gcp.endpoint', 'uses' => 'Controller@success']);
