@@ -1,51 +1,82 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+## Fineuploader GCS Exmple
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This repository is an example of how can you upload the files to GCS using fineuploader.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+#### Steps to use Fineuploader with GCS
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**1) Enable the S3 interoperability feature**
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+This will allow Fine Uploader to communicate with GCS in the same way it normally talks to S3.
 
-## Learning Laravel
+In the Google Cloud admin, navigate to **Cloud Storage > Settings > Interoperability.**
+There you can generate the S3-style developer access key (and corresponding secret key) to provide to Fine Uploader.
+Note that your access key will start with GOOG.
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+For more details about this step, see [simple migration](https://cloud.google.com/storage/docs/migrating#migration-simple) in the GCS docs.
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+**2) Enable CORS for your bucket.**
 
-## Laravel Sponsors
+Without this step, your user's browser will refuse to post information to GCS due to the same-origin security policy.
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+At the time of this writing, there appeared to be no way to do this step in the Google Cloud admin,
+so you need to enable it using either the gsutil command-line tool or with their XML/JSON API.
+The steps to take are explained pretty clearly under [Configuring CORS on a Bucket](https://cloud.google.com/storage/docs/cross-origin) in the GCS docs.
+Note that the examples in the GCS docs show granting `GET`, `HEAD`, and `DELETE`, while you want to grant `HEAD`, `POST` and `OPTIONS` to enable uploading via Fine Uploader.
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+ - **To install the gsutil in Ubuntu follow the below steps**
+   
+   **1) Install the required system packages**
+   
+      Several packages are required to successfully install gsutil from PyPI. You can install them with the following command:
+      
+      ```sudo apt-get install gcc python-dev python-setuptools libffi-dev```
+      
+   **2) Install pip**
+   
+     We recommend using the pip installer. You can install it with the following command:
+     
+     ```sudo apt-get install python-pip```
+     
+   **3) Install gsutil from PyPI**
+   
+     To install gsutil from PyPI, use the following command:
+    
+    ```sudo pip install gsutil```
+    
+ - **Enable the cors using gsutil**
+ 
+    **1) Create the cors.json file**
+    
+      Create the cors.json file in any location with following configuration.
+      ```json
+      [
+          {
+            "origin": ["http://example.appspot.com"],
+            "responseHeader": ["Content-Type"],
+            "method": ["GET", "HEAD", "DELETE", "POST", "OPTIONS"],
+            "maxAgeSeconds": 3600
+          }
+      ]
+      ```
+      
+    **2) Set the CORS to bucket**
+    
+      To set the CORS for bucket named `example` use the following command.
+      
+      ```bash 
+      gsutil cors set cors.json gs://example
+      ```
+      
+ **3) Use the normal S3 support in Fine Uploader to upload files to your GCS bucket.**
+ 
+   Now you should be able to take advantage of Fine Uploader's S3 support to upload files to GCS.
+   Follow the instructions in the Fine Uploader documentation as if you were using an S3 bucket, except:
+    
+   - For `endpoint` in the `request` option, use `storage.cloud.google.com` where you see s3.amazonaws.com.
+    
+   - For `accessKey`, use your GCS-provided access key (starting with `GOOG`) that you created above.
+    
+   - You still need to implement a `signature` endpoint on your side to sign upload requests, as discussed [here](http://docs.fineuploader.com/branch/master/quickstart/03-setting_up_server-s3.html).
+   
+     As you get that set up, note that you'll use the GCS-provided access/public key (starting with GOOG) and the corresponding private/secret key in the places where the docs show keys from AWS.
