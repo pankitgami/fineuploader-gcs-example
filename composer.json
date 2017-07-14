@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "pankitgami/fineuploader-gcs-example",
+    "description": "Uploade to Google Cloud Storage (GCS) using fineuploader.",
+    "keywords": ["fineuploader", "gcs", "php", "example"],
     "license": "MIT",
     "type": "project",
     "require": {
